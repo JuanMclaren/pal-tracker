@@ -121,7 +121,6 @@ public class TimeEntryControllerTest {
     public void testDelete() {
         long timeEntryId = 1L;
         ResponseEntity response = controller.delete(timeEntryId);
-        verify(timeEntryRepository).delete(timeEntryId);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 }

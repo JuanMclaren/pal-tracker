@@ -2,6 +2,7 @@ package io.pivotal.pal.tracker;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,13 +23,24 @@ public class TimeEntryController {
 
     @PutMapping("/time-entries/{timeEntryId}")
     public ResponseEntity update(@PathVariable long timeEntryId, @RequestBody TimeEntry expected) {
-        return new ResponseEntity<>(timeEntryRepository.update(timeEntryId,expected), HttpStatus.OK);
+        TimeEntry entry = timeEntryRepository.update(timeEntryId,expected);
+        if(ObjectUtils.isEmpty(entry)){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        else
+            return new ResponseEntity<>(entry , HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/time-entries/{timeEntryId}", consumes = "application/json")
     public ResponseEntity delete(@PathVariable long timeEntryId) {
-        timeEntryRepository.delete(timeEntryId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        TimeEntry entry = timeEntryRepository.find(timeEntryId);
+        if(ObjectUtils.isEmpty(entry)){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        else {
+            timeEntryRepository.delete(timeEntryId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
     }
     @GetMapping("/time-entries")
     public ResponseEntity<List<TimeEntry>> list() {
@@ -37,7 +49,12 @@ public class TimeEntryController {
 
     @GetMapping("/time-entries/{timeEntryId}")
     public ResponseEntity<TimeEntry> read(@PathVariable long timeEntryId) {
-        return new ResponseEntity<>(timeEntryRepository.find(timeEntryId), HttpStatus.OK);
+        TimeEntry entry = timeEntryRepository.find(timeEntryId);
+        if(ObjectUtils.isEmpty(entry)){
+            return new ResponseEntity<>(entry , HttpStatus.NOT_FOUND);
+        }
+        else
+        return new ResponseEntity<>(entry , HttpStatus.OK);
     }
 
 }
