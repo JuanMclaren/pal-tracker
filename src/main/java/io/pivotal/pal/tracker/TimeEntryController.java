@@ -31,16 +31,10 @@ public class TimeEntryController {
             return new ResponseEntity<>(entry , HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/time-entries/{timeEntryId}", consumes = "application/json")
+    @DeleteMapping(value = "/time-entries/{timeEntryId}")
     public ResponseEntity delete(@PathVariable long timeEntryId) {
-        TimeEntry entry = timeEntryRepository.find(timeEntryId);
-        if(ObjectUtils.isEmpty(entry)){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        else {
             timeEntryRepository.delete(timeEntryId);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     @GetMapping("/time-entries")
     public ResponseEntity<List<TimeEntry>> list() {
